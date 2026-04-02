@@ -7,6 +7,7 @@ import { GlassCard } from '@/components/game/GlassCard';
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { ArrowLeft, Clock, BookOpen } from 'lucide-react';
+import { markUpscArticleCompleted } from '@/data/upscProgress';
 
 const normalizeText = (value: string) => value.replace(/\s+/g, ' ').trim();
 
@@ -81,6 +82,7 @@ const ArticleView = () => {
       addXP(article.xpReward, 'cyan');
       incrementArticlesRead();
       updateQuestProgress('read');
+      markUpscArticleCompleted(article.id);
     }
   }, [scrollProgress, xpAwarded, article]);
 

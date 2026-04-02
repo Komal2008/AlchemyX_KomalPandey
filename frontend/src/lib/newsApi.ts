@@ -1,6 +1,8 @@
 import type { Article } from '@/store/gameStore';
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? 'http://localhost:3001';
+const API_BASE_URL = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '') ?? '/api';
+
+const apiUrl = (path: string) => `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
 
 type RawNewsArticleResponse = {
   id: string;
@@ -73,7 +75,7 @@ export const fetchRawNews = async (category?: string): Promise<Article[]> => {
     query.set('category', apiCategory);
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/news?${query.toString()}`);
+  const response = await fetch(apiUrl(`/news?${query.toString()}`));
   const data = await response.json() as RawNewsResponse;
 
   if (!response.ok || !data.success) {
@@ -84,7 +86,7 @@ export const fetchRawNews = async (category?: string): Promise<Article[]> => {
 };
 
 export const fetchLiveNews = async (count = 40): Promise<Article[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/news/enriched?count=${count}&country=in&language=en&mode=ai`);
+  const response = await fetch(apiUrl(`/news/enriched?count=${count}&country=in&language=en&mode=ai`));
   const data = await response.json() as EnrichedNewsResponse;
 
   if (!response.ok || !data.success) {
@@ -101,7 +103,7 @@ export const fetchLiveNewsByCategory = async (category: string, count = 8): Prom
     query.set('category', apiCategory);
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/news/enriched?${query.toString()}`);
+  const response = await fetch(apiUrl(`/news/enriched?${query.toString()}`));
   const data = await response.json() as EnrichedNewsResponse;
 
   if (!response.ok || !data.success) {
@@ -112,7 +114,7 @@ export const fetchLiveNewsByCategory = async (category: string, count = 8): Prom
 };
 
 export const generateArticleGameplay = async (article: Article) => {
-  const response = await fetch(`${API_BASE_URL}/api/news/generate`, {
+  const response = await fetch(apiUrl('/news/generate'), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

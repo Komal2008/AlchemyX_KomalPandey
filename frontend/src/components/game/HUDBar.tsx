@@ -42,7 +42,7 @@ export const HUDBar = () => {
           })}
         </nav>
 
-        <div className="ml-auto flex items-center gap-4">
+        <div className="ml-auto flex items-center gap-3">
           {/* Mode toggle */}
           <div className="flex items-center glass rounded-full p-0.5">
             {['news', 'upsc'].map(m => (
@@ -57,10 +57,10 @@ export const HUDBar = () => {
           </div>
           <StreakBadge size="sm" />
           <XPProgressBar compact />
-          <LevelBadge size="sm" />
-          <Link to="/profile" className="mr-2 w-8 h-8 rounded-full glass border border-nq-cyan/20 flex items-center justify-center overflow-hidden">
-            <AvatarVisual avatarId={avatarId} className="text-sm" imageClassName="w-8 h-8" />
+          <Link to="/profile" className="w-10 h-10 rounded-full glass border border-nq-cyan/20 flex items-center justify-center overflow-hidden shrink-0 shadow-[0_0_18px_rgba(0,229,255,0.12)]">
+            <AvatarVisual avatarId={avatarId} className="text-sm" imageClassName="w-10 h-10" />
           </Link>
+          <LevelBadge size="sm" />
         </div>
       </header>
 
