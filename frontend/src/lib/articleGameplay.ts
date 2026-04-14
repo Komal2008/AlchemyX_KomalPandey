@@ -131,11 +131,13 @@ const buildContentPrediction = (article: ArticleSeed) => {
   ];
   const rotation = hashString(`${seed}|pred-options`) % baseOptions.length;
   const options = [...baseOptions.slice(rotation), ...baseOptions.slice(0, rotation)];
+  const resolvedAnswer = options.findIndex((entry) => entry === baseOptions[0]);
 
   return {
     id: 'p1',
     question,
     options,
+    resolvedAnswer: resolvedAnswer >= 0 ? resolvedAnswer : 0,
     deadline: futureDate(30),
     xpReward: 25,
   };

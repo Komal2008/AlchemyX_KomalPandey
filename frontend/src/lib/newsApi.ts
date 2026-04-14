@@ -25,7 +25,7 @@ export interface EnrichedNewsArticleResponse {
   article: Omit<Article, 'quiz' | 'prediction'>;
   content: {
     quiz: { id: string; question: string; options: string[]; correct: number; explanation: string }[];
-    prediction: { id: string; question: string; options: string[]; deadline: string; xpReward: number };
+    prediction: { id: string; question: string; options: string[]; deadline: string; resolvedAnswer?: number; xpReward: number };
   };
 }
 

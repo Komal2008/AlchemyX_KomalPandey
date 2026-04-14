@@ -26,6 +26,7 @@ const toFrontendContent = (content: GeneratedArticleContent) => ({
     id: 'p1',
     question: content.prediction.question,
     options: content.prediction.options,
+    resolvedAnswer: content.prediction.correctIndex,
     deadline: content.prediction.deadline,
     xpReward: content.prediction.xpReward,
   },

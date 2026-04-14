@@ -20,7 +20,7 @@ export interface NewsApiEnrichedArticle {
   article: Omit<Article, 'quiz' | 'prediction'>;
   content: {
     quiz: { id: string; question: string; options: string[]; correct: number; explanation: string }[];
-    prediction: { id: string; question: string; options: string[]; deadline: string; xpReward: number };
+    prediction: { id: string; question: string; options: string[]; deadline: string; resolvedAnswer?: number; xpReward: number };
   };
 }
 
@@ -294,7 +294,7 @@ const calculateBadgesStatus = (totalXP: number, persistedUnlockedBadgeIds: strin
 export { calculateBadgesStatus };
 export const getUnlockedBadgeIds = (badges: Badge[]) => badges.filter((badge) => badge.earned).map((badge) => badge.id);
 
-export const useGameStore = create<GameStore>((set, get) => ({
+export const initialGameState: Pick<GameStore, 'user' | 'feed' | 'quests' | 'leaderboard' | 'ui'> = {
   user: {
     id: 'player1',
     username: 'Player',
@@ -327,6 +327,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
   quests: { daily: mockQuests, weeklyBonus: { id: 'wq1', title: 'Weekly Oracle', description: '70%+ prediction accuracy this week', type: 'predict', target: 70, progress: 71, xpReward: 200, completed: true }, lastReset: new Date().toISOString() },
   leaderboard: { global: mockLeaderboard, weekly: mockLeaderboard.slice(0, 10) },
   ui: { showLevelUpModal: false, xpFloats: [] },
+};
+
+export const useGameStore = create<GameStore>((set, get) => ({
+  ...initialGameState,
 
   addXP: (amount, color = 'cyan', x = window.innerWidth / 2, y = window.innerHeight / 2) => {
     const state = get();
@@ -468,4 +472,3 @@ export const useGameStore = create<GameStore>((set, get) => ({
     quests: { ...s.quests, daily: s.quests.daily.map(q => q.type === type && !q.completed ? { ...q, progress: Math.min(q.progress + 1, q.target), completed: q.progress + 1 >= q.target } : q) },
   })),
 }));
-

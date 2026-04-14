@@ -10,6 +10,7 @@ export interface GeneratedQuizItem {
 export interface GeneratedPredictionItem {
   question: string;
   options: string[];
+  correctIndex: number;
   deadline: string;
   xpReward: number;
 }
@@ -186,10 +187,12 @@ const buildContentPrediction = (article: NewsArticleInput): GeneratedPredictionI
   ];
   const rotation = hashString(`${seed}|pred-options`) % baseOptions.length;
   const options = [...baseOptions.slice(rotation), ...baseOptions.slice(0, rotation)];
+  const correctIndex = options.findIndex((entry) => entry === baseOptions[0]);
 
   return {
     question,
     options,
+    correctIndex: correctIndex >= 0 ? correctIndex : 0,
     deadline: futureDate(30),
     xpReward: 25,
   };
@@ -379,6 +382,7 @@ Return valid JSON only, with this exact shape:
   "prediction": {
     "question": "string",
     "options": ["Option 1", "Option 2", "Option 3"],
+    "correctIndex": 0,
     "deadline": "YYYY-MM-DD",
     "xpReward": 25
   }
@@ -396,6 +400,7 @@ Rules:
 - Keep explanations concise and educational.
 - Prediction must be based on the article content itself (evidence-backed interpretation), not "what will happen next".
 - Avoid future-looking stems like "most likely next development" or "what will happen".
+- prediction.correctIndex must be 0, 1, or 2 and point to the best-supported option.
 - Deadline must be a future date in YYYY-MM-DD format.
 - Do not include markdown or extra commentary.
 
@@ -424,6 +429,7 @@ Return valid JSON only, with this exact shape:
   "prediction": {
     "question": "string",
     "options": ["Option 1", "Option 2", "Option 3"],
+    "correctIndex": 0,
     "deadline": "YYYY-MM-DD",
     "xpReward": 25
   }
@@ -440,6 +446,7 @@ Rules:
 - Prediction should be article-specific and evidence-based from the current article details (not future speculation).
 - Prediction question must mention article entities/topics and be phrased as interpretation/alignment with reported facts.
 - Keep the prediction options short and mutually exclusive.
+- prediction.correctIndex must be 0, 1, or 2 and point to the option best supported by the article.
 - Deadline must be a future date in YYYY-MM-DD format.
 - xpReward should be an integer between 20 and 50.
 - Headline should be a polished, complete headline of 12 to 20 words, specific to the story.
@@ -508,9 +515,15 @@ const normaliseGeneratedContent = (article: NewsArticleInput, parsed: GeneratedA
         && /(most likely next development|what will happen|next update|future outcome)/i.test(candidate.question);
       const hasValidOptions = Array.isArray(candidate?.options) && candidate.options.length >= 3;
       if (generic || !hasValidOptions) return fallback.prediction;
+      const correctIndex = Number.isInteger(candidate.correctIndex)
+        && candidate.correctIndex >= 0
+        && candidate.correctIndex < candidate.options.length
+        ? candidate.correctIndex
+        : fallback.prediction.correctIndex;
       return {
         ...candidate,
         question: reservePredictionText(candidate.question) ? candidate.question : `${candidate.question} (${article.category || pickTopic(article)})`,
+        correctIndex,
       };
     })(),
   };
