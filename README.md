@@ -1,4 +1,10 @@
+
 # 🚀 NewsQuest — Play the News. Predict the Future.
+
+   ## 🎥 Demo Video and SCreenshots
+
+   Watch Project Video and ScreenShots:-(https://drive.google.com/drive/folders/1Oovq3uGSwtUBX1nqZK2-f2wLChszdKnX)
+   
 
 ## 🧠 Overview
 
